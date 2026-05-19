@@ -23,8 +23,8 @@ class Employee(db.Model):
     )
 
     role = db.Column(
-        db.String(20),
-        default="employee"
+        db.String(50),
+        nullable=False
     )
 
     qc_owner = db.Column(
@@ -51,25 +51,21 @@ class Report(db.Model):
         db.Text
     )
 
-    taxonomy = db.Column(
-        db.Text
-    )
-
-    selected_tags = db.Column(
-        db.Text
-    )
-
-    status = db.Column(
-        db.String(50),
-        default="Pending"
+    bucket = db.Column(
+        db.String(100)
     )
 
     assigned_to = db.Column(
         db.String(100)
     )
 
-    qc_assigned_to = db.Column(
-        db.String(100)
+    status = db.Column(
+        db.String(100),
+        default="Pending"
+    )
+
+    selected_tags = db.Column(
+        db.Text
     )
 
     qc_required = db.Column(
@@ -77,13 +73,8 @@ class Report(db.Model):
         default=False
     )
 
-    qc_tags = db.Column(
-        db.Text
-    )
-
-    qc_status = db.Column(
-        db.String(50),
-        default="Pending"
+    qc_assigned_to = db.Column(
+        db.String(100)
     )
 
     mismatch = db.Column(
@@ -91,34 +82,17 @@ class Report(db.Model):
         default=False
     )
 
-    employee_comment = db.Column(
-        db.Text
-    )
-
-    qa_comment = db.Column(
-        db.Text
-    )
-
-    final_tag = db.Column(
-        db.Text
-    )
-
     appeal_status = db.Column(
-        db.String(20),
-        default="NO"
+        db.String(50)
     )
 
-    qa_status = db.Column(
-        db.String(20),
-        default="NO"
-    )
+# =====================================================
+# GLOBAL TAXONOMY TABLE
+# =====================================================
 
-    bucket = db.Column(
-        db.String(100)
-    )
-    class GlobalTaxonomy(db.Model):
+class GlobalTaxonomy(db.Model):
 
-     id = db.Column(
+    id = db.Column(
         db.Integer,
         primary_key=True
     )
