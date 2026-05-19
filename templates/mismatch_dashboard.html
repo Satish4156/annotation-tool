@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Mismatch Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <style>
+
+        table {
+
+            width:100%;
+            border-collapse:collapse;
+            margin-top:20px;
+            background:white;
+        }
+
+        th {
+
+            background:#1e293b;
+            color:white;
+            padding:12px;
+            text-align:left;
+        }
+
+        td {
+
+            padding:12px;
+            border-bottom:1px solid #ddd;
+            vertical-align:top;
+        }
+
+        tr:hover {
+
+            background:#f5f5f5;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="top-bar">
+
+        <h2>Mismatch Dashboard</h2>
+
+    </div>
+
+    <div class="container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Report ID</th>
+
+                    <th>Employee</th>
+
+                    <th>Employee Tags</th>
+
+                    <th>Employee Time</th>
+
+                    <th>QC Name</th>
+
+                    <th>QC Tags</th>
+
+                    <th>QC Time</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for report in reports %}
+
+                <tr>
+
+                    <td>
+
+                        <a
+    href="/report/{{ report.id }}"
+    style="
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:bold;
+    "
+>
+
+    <a
+    href="/report/{{ report.id }}"
+    style="
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:bold;
+    "
+>
+
+    <a
+    href="/report/{{ report.id }}"
+    style="
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:bold;
+    "
+>
+
+    <a
+    href="/report/{{ report.id }}"
+    style="
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:bold;
+    "
+>
+
+    {{ report.report_id }}
+
+</a>
+
+</a>
+
+</a>
+
+</a>
+
+                    </td>
+
+                    <td>
+
+                        {{ report.employee_name }}
+
+                    </td>
+
+                    <td>
+
+                        {{ report.selected_tags }}
+
+                    </td>
+
+                    <td>
+
+                        {{ report.employee_timestamp }}
+
+                    </td>
+
+                    <td>
+
+                        {{ report.qc_name }}
+
+                    </td>
+
+                    <td>
+
+                        {{ report.qc_selected_tags }}
+
+                    </td>
+
+                    <td>
+
+                        {{ report.qc_timestamp }}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</body>
+
+</html>

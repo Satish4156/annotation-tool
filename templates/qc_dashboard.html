@@ -43,7 +43,22 @@
 
 <tr>
 
-    <td>{{ report.report_id }}</td>
+    <td>
+
+        <a
+            href="/report/{{ report.id }}"
+            style="
+                color:#2563eb;
+                text-decoration:none;
+                font-weight:bold;
+            "
+        >
+
+            {{ report.report_id }}
+
+        </a>
+
+    </td>
 
     <td>{{ report.assigned_to }}</td>
 

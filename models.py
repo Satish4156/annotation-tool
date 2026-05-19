@@ -36,11 +36,20 @@ class Employee(db.Model):
 # =====================================================
 
 class Report(db.Model):
+    qc_selected_tags = db.Column(db.Text)
+    employee_name = db.Column(db.String(100))
+    employee_timestamp = db.Column(db.String(100))
+    qc_name = db.Column(db.String(100))
+    qc_timestamp = db.Column(db.String(100))
+    escalation_reason = db.Column(db.Text)
+
+
 
     id = db.Column(
         db.Integer,
         primary_key=True
     )
+    
 
     report_id = db.Column(
         db.String(100),

@@ -8,7 +8,7 @@ body {
 }
 
 /* =====================================================
-   TOP BAR
+TOP BAR
 ===================================================== */
 
 .top-bar {
@@ -17,7 +17,7 @@ body {
 
     color: white;
 
-    padding: 15px;
+    padding: 15px 25px;
 
     display: flex;
 
@@ -26,13 +26,22 @@ body {
     align-items: center;
 }
 
+.top-bar a {
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: bold;
+}
+
 /* =====================================================
-   MAIN CONTAINER
+MAIN CONTAINER
 ===================================================== */
 
 .container {
 
-    width: 90%;
+    width: 92%;
 
     margin: auto;
 
@@ -40,7 +49,7 @@ body {
 }
 
 /* =====================================================
-   DASHBOARD CARDS
+DASHBOARD CARDS
 ===================================================== */
 
 .dashboard-cards {
@@ -54,8 +63,7 @@ body {
     flex-wrap: wrap;
 }
 
-
-   .card {
+.card {
 
     flex: 1;
 
@@ -74,8 +82,6 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-
-
 .card h3 {
 
     margin-top: 0;
@@ -91,33 +97,171 @@ body {
 }
 
 /* =====================================================
-   REPORT BOX
+EMPLOYEE LAYOUT
+===================================================== */
+
+.employee-layout {
+
+    display: flex;
+
+    gap: 20px;
+
+    align-items: flex-start;
+}
+
+/* =====================================================
+REPORT BOX
 ===================================================== */
 
 .report-box {
 
+    flex: 3;
+
     background: white;
 
-    padding: 25px;
+    padding: 30px;
 
-    border-radius: 10px;
+    border-radius: 15px;
 
-    margin-bottom: 20px;
-
-    font-size: 18px;
-
-    line-height: 1.8;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .report-content {
 
-    margin-top: 15px;
+    font-size: 22px;
+
+    line-height: 1.8;
+
+    margin-top: 30px;
+
+    margin-bottom: 40px;
 
     color: #333;
 }
 
 /* =====================================================
-   BUTTONS
+SEARCH BOX
+===================================================== */
+
+.tag-search-container {
+
+    margin-top: 20px;
+}
+
+#tagSearch {
+
+    width: 100%;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    border: 1px solid #ccc;
+
+    font-size: 16px;
+
+    outline: none;
+
+    box-sizing: border-box;
+
+    background: white;
+}
+
+#tagSearch:focus {
+
+    border-color: #2563eb;
+
+    box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+}
+
+/* =====================================================
+TAG RESULTS
+===================================================== */
+
+#tagResults {
+
+    margin-top: 10px;
+
+    background: white;
+
+    border-radius: 10px;
+
+    overflow-y: auto;
+
+    max-height: 300px;
+
+    border: 1px solid #ddd;
+}
+
+.tag-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    border-bottom: 1px solid #eee;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.tag-item:hover {
+
+    background: #f5f5f5;
+}
+
+/* =====================================================
+SELECTED TAGS
+===================================================== */
+
+#selectedTagsBox {
+
+    margin-top: 15px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.selected-tag {
+
+    background: #16a34a;
+
+    color: white;
+
+    padding: 10px 15px;
+
+    border-radius: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 14px;
+
+    font-weight: 500;
+}
+
+.remove-tag {
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    color: white;
+}
+
+/* =====================================================
+BUTTONS
 ===================================================== */
 
 .submit-btn {
@@ -130,11 +274,11 @@ body {
 
     padding: 12px 25px;
 
-    margin-top: 20px;
+    border-radius: 8px;
 
     cursor: pointer;
 
-    border-radius: 5px;
+    font-size: 15px;
 }
 
 .submit-btn:hover {
@@ -144,7 +288,7 @@ body {
 
 .escalate-btn {
 
-    background: rgb(231, 127, 127);
+    background: #e57373;
 
     color: white;
 
@@ -152,11 +296,13 @@ body {
 
     padding: 12px 25px;
 
-    margin-top: 15px;
+    border-radius: 8px;
 
     cursor: pointer;
 
-    border-radius: 5px;
+    font-size: 15px;
+
+    margin-left: 10px;
 }
 
 .escalate-btn:hover {
@@ -165,37 +311,96 @@ body {
 }
 
 /* =====================================================
-   ESCALATION BOX
+SIMILAR REPORTS PANEL
 ===================================================== */
 
-.escalation-box {
+.similar-panel {
 
-    background: rgb(251, 130, 130);
+    flex: 1;
+
+    background: white;
 
     padding: 20px;
 
-    border-radius: 10px;
+    border-radius: 15px;
 
-    margin-top: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    position: sticky;
+
+    top: 20px;
 }
 
-.escalation-box textarea {
+.similar-card {
 
-    width: 100%;
+    padding: 15px;
 
-    height: 100px;
+    border: 1px solid #ddd;
+
+    border-radius: 10px;
+
+    margin-bottom: 15px;
+
+    background: #f9fafb;
+}
+
+.similar-card p {
+
+    font-size: 14px;
 
     margin-top: 10px;
 
-    padding: 10px;
+    margin-bottom: 10px;
+}
 
-    border-radius: 5px;
+.similar-card small {
 
-    border: 1px solid #ccc;
+    color: #2563eb;
+
+    font-weight: bold;
 }
 
 /* =====================================================
-   LOGIN PAGE
+TABLES
+===================================================== */
+
+table {
+
+    width: 100%;
+
+    background: white;
+
+    margin-top: 20px;
+
+    border-collapse: collapse;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+table th {
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 15px;
+}
+
+table td {
+
+    padding: 15px;
+
+    border-bottom: 1px solid #ddd;
+}
+
+/* =====================================================
+LOGIN PAGE
 ===================================================== */
 
 .login-container {
@@ -276,42 +481,7 @@ body {
 }
 
 /* =====================================================
-   TABLE
-===================================================== */
-
-table {
-
-    width: 100%;
-
-    background: white;
-
-    margin-top: 20px;
-
-    border-collapse: collapse;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-}
-
-table th {
-
-    background: #2563eb;
-
-    color: white;
-
-    padding: 15px;
-}
-
-table td {
-
-    padding: 15px;
-
-    border-bottom: 1px solid #ddd;
-}
-
-/* =====================================================
-   LINKS
+GENERAL LINKS
 ===================================================== */
 
 a {
@@ -321,457 +491,4 @@ a {
     color: #2563eb;
 
     font-weight: bold;
-}
-.report-box {
-
-    max-width: 1000px;
-
-    margin: auto;
-
-    background: white;
-
-    padding: 30px;
-
-    border-radius: 15px;
-
-    margin-bottom: 30px;
-}
-
-.report-content {
-
-    font-size: 22px;
-
-    line-height: 1.8;
-
-    text-align: center;
-
-    margin-top: 30px;
-
-    margin-bottom: 40px;
-}
-#tagSearch {
-
-    width: 100%;
-
-    height: 55px;
-
-    font-size: 18px;
-
-    padding-left: 15px;
-
-    border-radius: 10px;
-
-    border: 1px solid #ccc;
-
-    margin-bottom: 20px;
-}
-
-.reports-table {
-
-    width: 100%;
-
-    border-collapse: collapse;
-
-    margin-top: 30px;
-
-    background: white;
-}
-
-.reports-table th {
-
-    background: #2563eb;
-
-    color: white;
-
-    padding: 15px;
-}
-
-.reports-table td {
-
-    padding: 15px;
-
-    border-bottom: 1px solid #ddd;
-
-    text-align: center;
-}
-.dashboard-section-title {
-
-    margin-top: 50px;
-
-    margin-bottom: 20px;
-
-    font-size: 30px;
-
-    font-weight: bold;
-}
-#selectedTagsContainer {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin-top: 15px;
-
-    margin-bottom: 20px;
-}
-
-#searchWrapper {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    align-items: center;
-
-    gap: 10px;
-
-    width: 100%;
-
-    min-height: 60px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 10px;
-
-    padding: 10px;
-
-    background: white;
-}
-
-#tagSearch {
-
-    border: none;
-
-    outline: none;
-
-    flex: 1;
-
-    font-size: 18px;
-
-    min-width: 250px;
-}
-
-#selectedTagsBox {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-}
-
-.selected-tag {
-
-    background: #16a34a;
-
-    color: white;
-
-    padding: 10px 15px;
-
-    border-radius: 20px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    font-size: 14px;
-
-    font-weight: bold;
-}
-
-.remove-tag {
-
-    cursor: pointer;
-
-    font-size: 14px;
-
-    color: white;
-
-    font-weight: bold;
-}
-
-#tagSearch {
-
-    width: 100%;
-
-    height: 55px;
-
-    font-size: 18px;
-
-    padding-left: 15px;
-
-    border-radius: 10px;
-
-    border: 1px solid #ccc;
-
-    margin-bottom: 20px;
-}
-
-.tag-item:hover {
-
-    background: #f3f4f6;
-}
-#tagSearch {
-
-    width: 100%;
-
-    height: 55px;
-
-    border-radius: 10px;
-
-    border: 1px solid #ccc;
-
-    padding-left: 15px;
-
-    font-size: 18px;
-}
-
-#selectedTagsBox {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin-top: 20px;
-
-    margin-bottom: 20px;
-}
-
-.selected-tag {
-
-    background: #16a34a;
-
-    color: white;
-
-    padding: 10px 15px;
-
-    border-radius: 20px;
-
-    font-size: 14px;
-
-    font-weight: bold;
-}
-
-.tag-item {
-
-    display: block;
-
-    padding: 12px;
-
-    border-radius: 10px;
-
-    background: white;
-
-    margin-bottom: 10px;
-
-    cursor: pointer;
-}
-
-.tag-item:hover {
-
-    background: #f3f4f6;
-}
-.employee-layout {
-
-    display: flex;
-
-    gap: 20px;
-
-    align-items: flex-start;
-}
-
-.report-box {
-
-    flex: 3;
-
-    background: white;
-
-    padding: 30px;
-
-    border-radius: 15px;
-
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.similar-panel {
-
-    flex: 1;
-
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 15px;
-
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-
-    max-height: 85vh;
-
-    overflow-y: auto;
-
-    position: sticky;
-
-    top: 20px;
-}
-
-.similar-card {
-
-    padding: 15px;
-
-    border: 1px solid #ddd;
-
-    border-radius: 10px;
-
-    margin-bottom: 15px;
-
-    background: #f9fafb;
-}
-
-.similar-card p {
-
-    font-size: 14px;
-
-    margin-top: 10px;
-
-    margin-bottom: 10px;
-}
-
-.similar-card small {
-
-    color: #2563eb;
-
-    font-weight: bold;
-}
-
-#searchWrapper {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    align-items: center;
-
-    gap: 10px;
-
-    width: 100%;
-
-    min-height: 60px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 10px;
-
-    padding: 10px;
-
-    background: white;
-}
-
-#tagSearch {
-
-    border: none;
-
-    outline: none;
-
-    flex: 1;
-
-    font-size: 18px;
-
-    min-width: 250px;
-}
-
-#selectedTagsBox {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-}
-
-.selected-tag {
-
-    background: #16a34a;
-
-    color: white;
-
-    padding: 10px 15px;
-
-    border-radius: 20px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    font-size: 14px;
-
-    font-weight: bold;
-}
-
-.remove-tag {
-
-    cursor: pointer;
-
-    font-size: 14px;
-
-    font-weight: bold;
-}
-
-.tag-item {
-
-    display: block;
-
-    padding: 12px;
-
-    border-radius: 10px;
-
-    background: white;
-
-    margin-top: 10px;
-
-    border: 1px solid #ddd;
-
-    cursor: pointer;
-}
-
-.tag-item:hover {
-
-    background: #f3f4f6;
-}
-
-.report-content {
-
-    font-size: 22px;
-
-    line-height: 1.8;
-
-    margin-top: 30px;
-
-    margin-bottom: 40px;
-}
-
-.card {
-
-    flex: 1;
-
-    min-width: 180px;
-
-    max-width: 250px;
-
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 15px;
-
-    text-align: center;
-
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }

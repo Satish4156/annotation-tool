@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Report Details</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <div class="top-bar">
+
+        <h2>Report Details</h2>
+
+    </div>
+
+    <div class="container">
+
+        <div class="report-box">
+
+            <h2>
+
+                Report ID :
+                {{ report.report_id }}
+
+            </h2>
+
+            <h3>
+
+                Bucket :
+                {{ report.bucket }}
+
+            </h3>
+
+            <p>
+
+                {{ report.content }}
+
+            </p>
+
+            <hr>
+
+            <h3>
+
+                Employee :
+                {{ report.employee_name }}
+
+            </h3>
+
+            <p>
+
+                Employee Tags :
+                {{ report.selected_tags }}
+
+            </p>
+
+            <p>
+
+                Employee Time :
+                {{ report.employee_timestamp }}
+
+            </p>
+
+            <hr>
+
+            <h3>
+
+                QC Reviewer :
+                {{ report.qc_name }}
+
+            </h3>
+
+            <p>
+
+                QC Tags :
+                {{ report.qc_selected_tags }}
+
+            </p>
+
+            <p>
+
+                QC Time :
+                {{ report.qc_timestamp }}
+
+            </p>
+
+            <hr>
+
+            <h3>
+
+                Status :
+                {{ report.status }}
+
+            </h3>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

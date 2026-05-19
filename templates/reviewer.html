@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>QC Reviewer Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <div class="top-bar">
+
+        <h2>QC Reviewer Dashboard</h2>
+
+        <a href="/logout">
+            Logout
+        </a>
+
+    </div>
+
+    <div class="container">
+
+        {% if reports %}
+
+            {% for report in reports %}
+
+            <div class="report-box">
+
+                <h2>
+
+                    Report ID :
+                    <a
+    href="/report/{{ report.id }}"
+    style="
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:bold;
+    "
+>
+
+    {{ report.report_id }}
+
+</a>
+
+                </h2>
+
+                <h3>
+
+                    Bucket :
+                    {{ report.bucket }}
+
+                </h3>
+
+                <p class="report-content">
+
+                    {{ report.content }}
+
+                </p>
+
+                <!-- TAG FORM -->
+
+                <form
+                    method="POST"
+                    action="/qc-submit/{{ report.id }}"
+                >
+
+                    <h3>Select QC Tags</h3>
+
+                    <!-- SEARCH -->
+
+                    <input
+                        type="text"
+                        id="tagSearch{{ report.id }}"
+                        placeholder="Search tags..."
+                        style="
+                            width:100%;
+                            padding:12px;
+                            border-radius:10px;
+                            border:1px solid #ccc;
+                            margin-top:15px;
+                        "
+                    >
+
+                    <!-- RESULTS -->
+
+                    <div
+                        id="results{{ report.id }}"
+                        style="
+                            max-height:250px;
+                            overflow-y:auto;
+                            border:1px solid #ddd;
+                            border-radius:10px;
+                            margin-top:10px;
+                            padding:10px;
+                            background:white;
+                        "
+                    >
+
+                        {% for tag in tags %}
+
+                        <label
+    class="tag-item-{{ report.id }}"
+    data-tag="{{ tag.lower() }}"
+    style="
+        display:none;
+        padding:12px;
+        border-bottom:1px solid #eee;
+        cursor:pointer;
+        border-radius:10px;
+        margin-bottom:8px;
+    "
+>
+
+    <input
+        type="checkbox"
+        name="tags"
+        value="{{ tag }}"
+        class="tag-checkbox"
+        onchange="toggleTag(this)"
+    >
+
+    <span class="tag-text">
+
+        {{ tag }}
+
+    </span>
+
+</label>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <!-- BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="submit-btn"
+                        style="margin-top:20px;"
+                    >
+
+                        Submit QC Audit
+
+                    </button>
+
+                </form>
+
+            </div>
+
+            <script>
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        function () {
+
+            const searchBoxes =
+                document.querySelectorAll(
+                    '[id^="tagSearch"]'
+                );
+
+            searchBoxes.forEach(searchBox => {
+
+                searchBox.addEventListener(
+                    'keyup',
+                    function () {
+
+                        const reportId =
+                            this.id.replace(
+                                'tagSearch',
+                                ''
+                            );
+
+                        const value =
+                            this.value.toLowerCase();
+
+                        const tagItems =
+                            document.querySelectorAll(
+                                '.tag-item-' + reportId
+                            );
+
+                        tagItems.forEach(item => {
+
+                            const tag =
+                                item.dataset.tag;
+
+                            if (
+                                value &&
+                                tag.includes(value)
+                            ) {
+
+                                item.style.display =
+                                    'block';
+
+                            } else {
+
+                                item.style.display =
+                                    'none';
+                            }
+                        });
+                    }
+                );
+            });
+        }
+    );
+
+</script>
+<script>
+
+function toggleTag(checkbox) {
+
+    const label = checkbox.parentElement;
+
+    if (checkbox.checked) {
+
+        label.style.background = "#18a949";
+        label.style.color = "white";
+
+    } else {
+
+        label.style.background = "white";
+        label.style.color = "black";
+    }
+}
+
+</script>
+            {% endfor %}
+
+        {% else %}
+
+            <div class="report-box">
+
+                <h2>No QC Pending Reports</h2>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>

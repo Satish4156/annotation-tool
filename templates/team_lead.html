@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Team Lead Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <style>
+
+        body {
+
+            font-family: Arial;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        .top-bar {
+
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+
+            padding: 30px;
+        }
+
+        .cards {
+
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card h2 {
+
+            margin: 0;
+            font-size: 30px;
+            color: #2563eb;
+        }
+
+        .card p {
+
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        table {
+
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+
+            background: #1e293b;
+            color: white;
+            padding: 14px;
+            text-align: left;
+        }
+
+        td {
+
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        tr:hover {
+
+            background: #f9fafb;
+        }
+
+        .tag-box {
+
+            background: #16a34a;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 3px;
+            font-size: 14px;
+        }
+
+        textarea {
+
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+            min-height: 80px;
+        }
+
+        .submit-btn {
+
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .submit-btn:hover {
+
+            background: #1d4ed8;
+        }
+
+        .reason-box {
+
+            background: #fff7ed;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #f97316;
+            font-size: 14px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="top-bar">
+
+        <h1>Team Lead Dashboard</h1>
+
+    </div>
+
+    <div class="container">
+
+        <!-- KPI CARDS -->
+
+        <div class="cards">
+
+            <div class="card">
+
+                <h2>
+
+                    {{ total_reports }}
+
+                </h2>
+
+                <p>Total Reports</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>
+
+                    {{ completed_reports }}
+
+                </h2>
+
+                <p>Completed</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>
+
+                    {{ qc_pending }}
+
+                </h2>
+
+                <p>QC Pending</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>
+
+                    {{ mismatch_reports }}
+
+                </h2>
+
+                <p>Mismatches</p>
+
+            </div>
+
+        </div>
+
+        <!-- REPORT TABLE -->
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Report ID</th>
+
+                    <th>Employee</th>
+
+                    <th>Status</th>
+
+                    <th>Escalation Reason</th>
+
+                    <th>Final TL Tags</th>
+
+                    <th>QC Tags</th>
+
+                    <th>Mismatch</th>
+
+                    <th>TL Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for report in reports %}
+
+                <tr>
+
+                    <!-- REPORT ID -->
+
+                    <td>
+
+                        <a
+                            href="/report/{{ report.id }}"
+                            style="
+                                color:#2563eb;
+                                text-decoration:none;
+                                font-weight:bold;
+                            "
+                        >
+
+                            {{ report.report_id }}
+
+                        </a>
+
+                    </td>
+
+                    <!-- EMPLOYEE -->
+
+                    <td>
+
+                        {{ report.employee_name or 'None' }}
+
+                    </td>
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        {{ report.status }}
+
+                    </td>
+
+                    <!-- ESCALATION REASON -->
+
+                    <td>
+
+                        <div class="reason-box">
+
+                            {{ report.escalation_reason or 'No reason provided' }}
+
+                        </div>
+
+                    </td>
+
+                    <!-- TL TAGS -->
+
+                    <td>
+
+                        {% if report.selected_tags %}
+
+                            <div class="tag-box">
+
+                                {{ report.selected_tags }}
+
+                            </div>
+
+                        {% else %}
+
+                            None
+
+                        {% endif %}
+
+                    </td>
+
+                    <!-- QC TAGS -->
+
+                    <td>
+
+                        {% if report.qc_selected_tags %}
+
+                            <div class="tag-box">
+
+                                {{ report.qc_selected_tags }}
+
+                            </div>
+
+                        {% else %}
+
+                            None
+
+                        {% endif %}
+
+                    </td>
+
+                    <!-- MISMATCH -->
+
+                    <td>
+
+                        {% if report.mismatch %}
+
+                            ❌ Yes
+
+                        {% else %}
+
+                            ✅ No
+
+                        {% endif %}
+
+                    </td>
+
+                    <!-- TL ACTION -->
+
+                    <td>
+
+                        <form
+                            method="POST"
+                            action="/tl-submit/{{ report.id }}"
+                        >
+
+                            <textarea
+                                name="tl_tags"
+                                placeholder="Attach final tags..."
+                                required
+                            ></textarea>
+
+                            <button
+                                type="submit"
+                                class="submit-btn"
+                            >
+
+                                Submit Tags
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</body>
+
+</html>
