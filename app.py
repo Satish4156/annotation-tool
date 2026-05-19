@@ -421,7 +421,89 @@ def employee():
         return redirect('/')
 
     username = session['username']
+
     print("Logged in user:", username)
+
+    # ================================================
+    # CURRENT REPORT
+    # ================================================
+
+    report = Report.query.filter(
+
+        Report.assigned_to == username,
+
+        Report.status.in_([
+            "Pending",
+            "In Progress"
+        ])
+
+    ).first()
+
+    if report:
+
+        if report.status == "Pending":
+
+            report.status = "In Progress"
+
+            db.session.commit()
+
+    # ================================================
+    # COUNTS
+    # ================================================
+
+    completed_count = Report.query.filter_by(
+        assigned_to=username,
+        status="Completed"
+    ).count()
+
+    pending_count = Report.query.filter(
+
+        Report.assigned_to == username,
+
+        Report.status.in_([
+            "Pending",
+            "In Progress"
+        ])
+
+    ).count()
+
+    qc_returned_count = Report.query.filter_by(
+        assigned_to=username,
+        mismatch=True
+    ).count()
+
+    # ================================================
+    # GLOBAL TAGS
+    # ================================================
+
+    taxonomy = GlobalTaxonomy.query.first()
+
+    if taxonomy:
+
+        tags = taxonomy.tags.splitlines()
+
+    else:
+
+        tags = []
+
+    # ================================================
+    # RENDER
+    # ================================================
+
+    return render_template(
+
+        'employee.html',
+
+        report=report,
+
+        completed_count=completed_count,
+
+        pending_count=pending_count,
+
+        qc_returned_count=qc_returned_count,
+
+        tags=tags
+    )
 
     # ================================================
     # CHECK EXISTING ASSIGNED REPORT

@@ -90,9 +90,21 @@
 
                     <h3>Select Tags</h3>
 
-                    {% if report.taxonomy %}
+                    {% for tag in tags %}
 
-                        {% set tags = report.taxonomy.split(',') %}
+<label class="tag-option">
+
+    <input
+        type="checkbox"
+        name="tags"
+        value="{{ tag }}"
+    >
+
+    {{ tag }}
+
+</label>
+
+{% endfor %}
 
                         <!-- SEARCH WRAPPER -->
 
