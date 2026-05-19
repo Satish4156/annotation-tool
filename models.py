@@ -116,3 +116,13 @@ class Report(db.Model):
     bucket = db.Column(
         db.String(100)
     )
+    class GlobalTaxonomy(db.Model):
+
+     id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    tags = db.Column(
+        db.Text
+    )

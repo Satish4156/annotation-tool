@@ -1,7 +1,14 @@
 from flask import Flask, render_template, request, redirect, session
 import random
 from database import db
-from models import Employee, Report
+from models import (
+
+    Employee,
+
+    Report,
+
+    GlobalTaxonomy
+)
 import os
 import secrets
 import pandas as pd
@@ -299,58 +306,107 @@ def create_employee():
 # UPLOAD REPORTS
 # =====================================================
 
+# =====================================================
+# UPLOAD REPORTS
+# =====================================================
+
 @app.route('/upload', methods=['GET', 'POST'])
+
 def upload():
 
     if 'username' not in session:
         return redirect('/')
 
-    
-
     if request.method == 'POST':
 
         common_tags = request.form.get(
-    'common_tags'
-)
+            'common_tags'
+        )
+
+        # ============================================
+        # SAVE GLOBAL TAXONOMY
+        # ============================================
+
+        existing_taxonomy = GlobalTaxonomy.query.first()
+
+        if not existing_taxonomy:
+
+            taxonomy = GlobalTaxonomy(
+                tags=common_tags
+            )
+
+            db.session.add(taxonomy)
+
+        else:
+
+            existing_taxonomy.tags = common_tags
+
+        # ============================================
+        # READ FILE
+        # ============================================
 
         file = request.files['file']
 
         if file.filename.endswith('.csv'):
+
             df = pd.read_csv(file)
+
         else:
+
             df = pd.read_excel(file)
 
-        employees = Employee.query.filter_by(role="employee").all()
+        # ============================================
+        # GET EMPLOYEES
+        # ============================================
+
+        employees = Employee.query.filter_by(
+            role="employee"
+        ).all()
+
+        if len(employees) == 0:
+
+            return "No Employees Found"
+
         employee_index = 0
 
+        # ============================================
+        # STORE REPORTS
+        # ============================================
+
         for _, row in df.iterrows():
+
             report_exists = Report.query.filter_by(
                 report_id=str(row['report_id'])
             ).first()
 
             if not report_exists:
+
                 assigned_employee = employees[
                     employee_index % len(employees)
                 ]
 
                 report = Report(
+
                     report_id=str(row['report_id']),
+
                     content=str(row['content']),
-                    taxonomy=common_tags,
+
                     bucket=str(row['bucket']),
+
                     assigned_to=assigned_employee.username,
+
                     status="Pending"
                 )
 
-                employee_index += 1
                 db.session.add(report)
+
+                employee_index += 1
 
         db.session.commit()
 
         return redirect('/admin')
 
     return render_template('upload.html')
-
 
 
 # =====================================================
@@ -491,17 +547,19 @@ def escalate(id):
 
     if report:
 
-      report.status = "Escalated"
+        report.status = "Escalated"
 
-      team_lead = Employee.query.filter_by(
-        role="team_lead"
-    ).first()
+        team_lead = Employee.query.filter_by(
+            role="team_lead"
+        ).first()
 
-    if team_lead:
+        if team_lead:
 
-        report.qc_assigned_to = team_lead.username
+            report.qc_assigned_to = team_lead.username
 
-    db.session.commit()
+        db.session.commit()
+
+    return redirect('/employee')
 
 # =====================================================
 # QUALITY REVIEWER DASHBOARD
