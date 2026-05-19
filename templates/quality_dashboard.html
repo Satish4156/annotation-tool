@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Quality Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="top-bar">
+
+    <h2>Public Quality Dashboard</h2>
+
+</div>
+
+<div class="container">
+
+    <div class="dashboard-cards">
+
+        <div class="card">
+
+            <h3>Total Reports</h3>
+
+            <p>{{ total_reports }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Mismatch Reports</h3>
+
+            <p>{{ mismatch_reports }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Valid Appeals</h3>
+
+            <p>{{ valid_appeals }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>QC Pending</h3>
+
+            <p>{{ qc_pending }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Completed Reports</h3>
+
+            <p>{{ completed_reports }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Pre-Appeal Quality</h3>
+
+            <p>{{ pre_quality }}%</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Post-Appeal Quality</h3>
+
+            <p>{{ post_quality }}%</p>
+
+        </div>
+
+    </div>
+
+    <h2 class="dashboard-section-title">
+        Employee Wise Quality
+    </h2>
+
+<table class="reports-table">
+
+    <tr>
+
+        <th>Employee</th>
+
+        <th>Total Reports</th>
+
+        <th>Mismatch</th>
+
+        <th>Valid Appeals</th>
+
+        <th>Pre-Appeal Quality</th>
+
+        <th>Post-Appeal Quality</th>
+
+    </tr>
+
+    {% for item in employee_quality %}
+
+    <tr>
+
+        <td>{{ item.employee }}</td>
+
+        <td>{{ item.total }}</td>
+
+        <td>{{ item.mismatch }}</td>
+
+        <td>{{ item.valid_appeals }}</td>
+
+        <td>{{ item.pre_quality }}%</td>
+
+        <td>{{ item.post_quality }}%</td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+</div>
+
+</body>
+
+</html>

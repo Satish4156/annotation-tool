@@ -1,0 +1,54 @@
+<h1>QC Dashboard</h1>
+
+<h2>QC Pending Reports</h2>
+
+<table border="1">
+
+<tr>
+
+    <th>Report ID</th>
+    <th>Employee</th>
+    <th>Status</th>
+
+</tr>
+
+{% for report in reports %}
+
+<tr>
+
+    <td>{{ report.report_id }}</td>
+
+    <td>{{ report.assigned_to }}</td>
+
+    <td>{{ report.status }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<h2>Mismatch Reports</h2>
+
+<table border="1">
+
+<tr>
+
+    <th>Report ID</th>
+    <th>Employee</th>
+
+</tr>
+
+{% for report in mismatch_reports %}
+
+<tr>
+
+    <td>{{ report.report_id }}</td>
+
+    <td>{{ report.assigned_to }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Admin Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="top-bar">
+
+    <h2>Admin Dashboard</h2>
+
+    <a href="/logout">
+        Logout
+    </a>
+
+</div>
+
+<div class="container">
+
+    <!-- =========================================
+         SEARCH & FILTER
+    ========================================== -->
+
+    <div class="report-box">
+
+        <h2>Search Reports</h2>
+
+        <form method="GET" action="/admin">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search Report ID"
+            >
+
+            <select name="status">
+
+                <option value="">
+                    All Status
+                </option>
+
+                <option value="Pending">
+                    Pending
+                </option>
+
+                <option value="In Progress">
+                    In Progress
+                </option>
+
+                <option value="Completed">
+                    Completed
+                </option>
+
+                <option value="Escalated">
+                    Escalated
+                </option>
+
+            </select>
+
+            <button
+                type="submit"
+                class="submit-btn"
+            >
+                Search
+            </button>
+
+        </form>
+
+    </div>
+   
+
+    <!-- =========================================
+         UPLOAD BUTTON
+    ========================================== -->
+
+    <div style="margin-bottom:20px;">
+
+        <a href="/upload">
+
+            <button class="submit-btn">
+
+                Upload Reports
+
+            </button>
+
+        </a>
+
+    </div>
+
+    <!-- =========================================
+         DASHBOARD CARDS
+    ========================================== -->
+
+    <div class="dashboard-cards">
+
+        <div class="card">
+
+            <h3>Total Reports</h3>
+
+            <p>{{ total_reports }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Pending Reports</h3>
+
+            <p>{{ pending_reports }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Completed Reports</h3>
+
+            <p>{{ completed_reports }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Escalated Reports</h3>
+
+            <p>{{ escalated_reports }}</p>
+
+        </div>
+
+    </div>
+    <!-- =========================================
+         QC PENDING CARDS
+    ========================================== -->
+    <div class="card">
+
+    <h3>QC Pending</h3>
+
+    <p>{{ qc_pending_reports }}</p>
+
+</div>
+
+    
+<div
+    style="
+        display:flex;
+        justify-content:flex-end;
+        margin-bottom:20px;
+        position:relative;
+    "
+>
+<div
+    id="addEmployeePopup"
+    style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:30px;
+        border-radius:15px;
+        box-shadow:0 2px 20px rgba(0,0,0,0.3);
+        z-index:200;
+        width:400px;
+    "
+>
+
+    <h2>Add Employee</h2>
+
+    <form
+        method="POST"
+        action="/create_employee"
+    >
+
+        <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            required
+            style="
+                width:100%;
+                padding:12px;
+                margin-bottom:15px;
+            "
+        >
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+            style="
+                width:100%;
+                padding:12px;
+                margin-bottom:15px;
+            "
+        >
+
+        <select
+            name="role"
+            style="
+                width:100%;
+                padding:12px;
+                margin-bottom:15px;
+            "
+        >
+
+            <option value="employee">
+                Employee
+            </option>
+
+            <option value="quality_reviewer">
+                Quality Reviewer
+            </option>
+
+            <option value="team_lead">
+                Team Lead
+            </option>
+
+        </select>
+
+        <input
+            type="text"
+            name="qc_owner"
+            placeholder="QC Owner Username"
+            style="
+                width:100%;
+                padding:12px;
+                margin-bottom:15px;
+            "
+        >
+
+        <button
+            type="submit"
+            style="
+                background:green;
+                color:white;
+                border:none;
+                padding:12px 20px;
+                border-radius:8px;
+                cursor:pointer;
+            "
+        >
+            Create
+        </button>
+
+        <button
+            type="button"
+            onclick="closeAddEmployee()"
+            style="
+                background:red;
+                color:white;
+                border:none;
+                padding:12px 20px;
+                border-radius:8px;
+                cursor:pointer;
+            "
+        >
+            Close
+        </button>
+
+    </form>
+
+</div>
+<div
+    id="deleteEmployeePopup"
+    style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:30px;
+        border-radius:15px;
+        box-shadow:0 2px 20px rgba(0,0,0,0.3);
+        z-index:200;
+        width:400px;
+    "
+>
+
+    <h2>Delete Employee</h2>
+
+    <form
+        method="POST"
+        action="/delete_employee"
+    >
+
+        <select
+            name="employee_id"
+            style="
+                width:100%;
+                padding:12px;
+                margin-bottom:20px;
+            "
+        >
+
+            {% for employee in employee_stats %}
+
+            <option value="{{ employee.username }}">
+
+                {{ employee.username }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <button
+            type="submit"
+            style="
+                background:red;
+                color:white;
+                border:none;
+                padding:12px 20px;
+                border-radius:8px;
+                cursor:pointer;
+            "
+        >
+            Delete
+        </button>
+
+        <button
+            type="button"
+            onclick="closeDeleteEmployee()"
+            style="
+                background:gray;
+                color:white;
+                border:none;
+                padding:12px 20px;
+                border-radius:8px;
+                cursor:pointer;
+            "
+        >
+            Close
+        </button>
+
+    </form>
+
+</div>
+    <button
+        onclick="toggleMenu()"
+        style="
+            border:none;
+            background:none;
+            font-size:28px;
+            cursor:pointer;
+        "
+    >
+        ⋮
+    </button>
+
+    <div
+        id="menuDropdown"
+        style="
+            display:none;
+            position:absolute;
+            top:40px;
+            right:0;
+            background:white;
+            border-radius:10px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.2);
+            overflow:hidden;
+            z-index:100;
+        "
+    >
+
+        <button
+            onclick="openAddEmployee()"
+            style="
+                display:block;
+                width:200px;
+                padding:15px;
+                border:none;
+                background:white;
+                text-align:left;
+                cursor:pointer;
+            "
+        >
+            Add Employee
+        </button>
+
+        <button
+            onclick="openDeleteEmployee()"
+            style="
+                display:block;
+                width:200px;
+                padding:15px;
+                border:none;
+                background:white;
+                text-align:left;
+                cursor:pointer;
+            "
+        >
+            Delete Employee
+        </button>
+
+    </div>
+
+</div>
+    
+
+    <h2 style="margin-top:40px;">
+
+    Employee Productivity
+
+</h2>
+
+<table
+    style="
+        width:100%;
+        border-collapse:collapse;
+        margin-top:20px;
+        background:white;
+        border-radius:10px;
+        overflow:hidden;
+    "
+>
+
+    <tr
+        style="
+            background:#2f65f5;
+            color:white;
+        "
+    >
+
+        <th style="padding:15px;">
+            Username
+        </th>
+
+        <th style="padding:15px;">
+            Role
+        </th>
+
+        <th style="padding:15px;">
+            Completed
+        </th>
+
+        <th style="padding:15px;">
+            In Progress
+        </th>
+
+        <th style="padding:15px;">
+            Escalated
+        </th>
+
+    </tr>
+
+    {% for employee in employee_stats %}
+
+    <tr>
+
+        <td style="padding:15px;">
+            {{ employee.username }}
+        </td>
+
+        <td style="padding:15px;">
+            {{ employee.role }}
+        </td>
+
+        <td style="padding:15px;">
+            {{ employee.completed }}
+        </td>
+
+        <td style="padding:15px;">
+            {{ employee.progress }}
+        </td>
+
+        <td style="padding:15px;">
+            {{ employee.escalated }}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+</div>
+
+</div>
+<script>
+
+function toggleMenu() {
+
+    const menu = document.getElementById(
+        'menuDropdown'
+    );
+
+    if (menu.style.display === 'block') {
+
+        menu.style.display = 'none';
+
+    } else {
+
+        menu.style.display = 'block';
+    }
+}
+
+function openAddEmployee() {
+
+    document.getElementById(
+        'addEmployeePopup'
+    ).style.display = 'block';
+}
+
+function closeAddEmployee() {
+
+    document.getElementById(
+        'addEmployeePopup'
+    ).style.display = 'none';
+}
+
+function openDeleteEmployee() {
+
+    document.getElementById(
+        'deleteEmployeePopup'
+    ).style.display = 'block';
+}
+
+function closeDeleteEmployee() {
+
+    document.getElementById(
+        'deleteEmployeePopup'
+    ).style.display = 'none';
+}
+
+</script>
+</body>
+
+</html>

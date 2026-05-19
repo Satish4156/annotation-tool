@@ -1,0 +1,37 @@
+<h1>Production Dashboard</h1>
+
+<table border="1" cellpadding="10">
+
+<tr>
+
+    <th>Report ID</th>
+
+    <th>Employee</th>
+
+    <th>Bucket</th>
+
+    <th>Selected Tags</th>
+
+    <th>Status</th>
+
+</tr>
+
+{% for report in reports %}
+
+<tr>
+
+    <td>{{ report.report_id }}</td>
+
+    <td>{{ report.assigned_to }}</td>
+
+    <td>{{ report.bucket }}</td>
+
+    <td>{{ report.selected_tags }}</td>
+
+    <td>{{ report.status }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>

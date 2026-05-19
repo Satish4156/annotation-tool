@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Employee Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="top-bar">
+
+    <h2>Employee Dashboard</h2>
+
+    <a href="/logout">
+        Logout
+    </a>
+
+</div>
+
+<div class="container">
+
+    <!-- DASHBOARD -->
+
+    <div class="dashboard-cards">
+
+        <div class="card">
+
+            <h3>Completed</h3>
+
+            <p>{{ completed_count }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Pending</h3>
+
+            <p>{{ pending_count }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN LAYOUT -->
+
+    <div class="employee-layout">
+
+        <!-- LEFT PANEL -->
+
+        <div class="report-box">
+
+            {% if report %}
+
+            <h2>
+
+                Report ID :
+                {{ report.report_id }}
+
+            </h2>
+
+            <h3>
+
+                Bucket :
+                {{ report.bucket }}
+
+            </h3>
+
+            <div class="report-content">
+
+                {{ report.content }}
+
+            </div>
+
+            <!-- TAG FORM -->
+
+            <form
+    id="tagForm"
+    method="POST"
+    action="/submit/{{ report.id }}"
+>
+
+                <div class="options-box">
+
+                    <h3>Select Tags</h3>
+
+                    {% if report.taxonomy %}
+
+                        {% set tags = report.taxonomy.split(',') %}
+
+                        <!-- SEARCH WRAPPER -->
+
+                        <div id="searchWrapper">
+
+                            <!-- SELECTED TAGS -->
+
+                            <div id="selectedTagsBox">
+
+                            </div>
+
+                            <!-- SEARCH INPUT -->
+
+                            <input
+                                type="text"
+                                id="tagSearch"
+                                placeholder="Search tags..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+                        <!-- SEARCH RESULTS -->
+
+                        <div id="tagResults">
+
+                            {% for tag in tags %}
+
+                            <label
+                                class="tag-item"
+                                data-tag="{{ tag.strip().lower() }}"
+                                style="display:none;"
+                            >
+
+                                <input
+                                    type="checkbox"
+                                    name="tags"
+                                    value="{{ tag.strip() }}"
+                                >
+
+                                {{ tag.strip() }}
+
+                            </label>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- BUTTONS -->
+
+                <div style="margin-top:30px;">
+
+                    <button
+                        type="submit"
+                        class="submit-btn"
+                        onclick="return validateSubmit(event)"
+                    >
+                        Submit
+                    </button>
+
+                    <button
+                        type="button"
+                        class="escalate-btn"
+                        onclick="openEscalation()"
+                    >
+                        Escalate
+                    </button>
+
+                </div>
+
+            </form>
+
+            {% else %}
+
+            <h2>No Pending Reports</h2>
+
+            {% endif %}
+
+        </div>
+
+        <!-- RIGHT PANEL -->
+
+        <div
+            class="similar-panel"
+            id="similarPanel"
+            style="display:none;"
+        >
+
+            <div
+                style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:20px;
+                "
+            >
+
+                <h3>
+
+                    Similar Tagged Reports
+
+                </h3>
+
+                <span
+                    onclick="closeSimilarPanel()"
+                    style="
+                        cursor:pointer;
+                        font-size:22px;
+                        font-weight:bold;
+                        color:red;
+                    "
+                >
+                    ✖
+                </span>
+
+            </div>
+
+            {% for item in similar_reports %}
+
+            <div
+                class="similar-card"
+                data-tags="{{ item.selected_tags }}"
+            >
+
+                <strong>
+
+                    {{ item.report_id }}
+
+                </strong>
+
+                <p>
+
+                    {{ item.content[:120] }}
+
+                </p>
+
+                <small>
+
+                    {{ item.selected_tags }}
+
+                </small>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ESCALATION POPUP -->
+
+<div
+    id="escalationPopup"
+    style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:30px;
+        width:400px;
+        border-radius:15px;
+        box-shadow:0 0 20px rgba(0,0,0,0.3);
+        z-index:999;
+    "
+>
+
+    <h3>Escalation Reason</h3>
+
+    <form
+        method="POST"
+        action="/escalate/{{ report.id }}"
+    >
+
+        <textarea
+            name="reason"
+            required
+            placeholder="Enter escalation reason..."
+            style="
+                width:100%;
+                height:120px;
+                margin-top:15px;
+                padding:10px;
+            "
+        ></textarea>
+
+        <div style="margin-top:20px;">
+
+            <button
+                type="submit"
+                class="escalate-btn"
+            >
+                Submit Escalation
+            </button>
+
+            <button
+                type="button"
+                onclick="closeEscalation()"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+const searchBox = document.getElementById(
+    'tagSearch'
+);
+
+const tagItems = document.querySelectorAll(
+    '.tag-item'
+);
+
+const selectedTagsBox = document.getElementById(
+    'selectedTagsBox'
+);
+
+searchBox.addEventListener(
+    'keyup',
+    function () {
+
+        let value = this.value.toLowerCase();
+
+        tagItems.forEach(item => {
+
+            const checkbox = item.querySelector(
+                'input'
+            );
+
+            let tag = item.dataset.tag;
+
+            if (
+                checkbox.checked
+            ) {
+
+                item.style.display = 'none';
+
+                return;
+            }
+
+            if (
+                tag.includes(value)
+                &&
+                value !== ''
+            ) {
+
+                item.style.display = 'block';
+
+            } else {
+
+                item.style.display = 'none';
+            }
+        });
+    }
+);
+
+tagItems.forEach(item => {
+
+    const checkbox = item.querySelector(
+        'input'
+    );
+
+    checkbox.addEventListener(
+    'change',
+    function () {
+
+        updateSelectedTags();
+
+        searchBox.value = '';
+
+        tagItems.forEach(tag => {
+
+            tag.style.display = 'none';
+        });
+    }
+);
+});
+
+function updateSelectedTags() {
+
+    selectedTagsBox.innerHTML = '';
+
+    const checkedValues = [];
+
+    document
+    .querySelectorAll(
+        'input[name="tags"]:checked'
+    )
+    .forEach(tag => {
+
+        checkedValues.push(
+            tag.value.toLowerCase()
+        );
+
+        const div = document.createElement(
+            'div'
+        );
+
+        div.className = 'selected-tag';
+
+        div.innerHTML = `
+
+            <span
+                onclick="showSimilarReports('${tag.value}')"
+                style="cursor:pointer;"
+            >
+
+                ${tag.value}
+
+            </span>
+
+            <span
+                class="remove-tag"
+                onclick="removeTag('${tag.value}')"
+            >
+                ✖
+            </span>
+        `;
+
+        selectedTagsBox.appendChild(div);
+    });
+
+    tagItems.forEach(item => {
+
+        const tag = item.dataset.tag;
+
+        if (
+            checkedValues.includes(tag)
+        ) {
+
+            item.style.display = 'none';
+        }
+    });
+}
+
+function removeTag(tagValue) {
+
+    const checkboxes = document.querySelectorAll(
+        'input[name="tags"]'
+    );
+
+    checkboxes.forEach(checkbox => {
+
+        if (checkbox.value === tagValue) {
+
+            checkbox.checked = false;
+        }
+    });
+
+    updateSelectedTags();
+
+    const checked = document.querySelectorAll(
+        'input[name="tags"]:checked'
+    );
+
+    if (checked.length === 0) {
+
+        document.getElementById(
+            'similarPanel'
+        ).style.display = 'none';
+    }
+}
+
+function showSimilarReports(selectedTag) {
+
+    const panel = document.getElementById(
+        'similarPanel'
+    );
+
+    panel.style.display = 'block';
+
+    const cards = document.querySelectorAll(
+        '.similar-card'
+    );
+
+    cards.forEach(card => {
+
+        const tags = card.dataset.tags
+            ? card.dataset.tags.toLowerCase()
+            : '';
+
+        if (
+            tags.includes(
+                selectedTag.toLowerCase()
+            )
+        ) {
+
+            card.style.display = 'block';
+
+        } else {
+
+            card.style.display = 'none';
+        }
+    });
+}
+
+function closeSimilarPanel() {
+
+    document.getElementById(
+        'similarPanel'
+    ).style.display = 'none';
+}
+
+function openEscalation() {
+
+    const checkedTags = document.querySelectorAll(
+        'input[name="tags"]:checked'
+    );
+
+    if (checkedTags.length > 0) {
+
+        alert(
+            'Remove selected tags before escalation.'
+        );
+
+        return;
+    }
+
+    document.getElementById(
+        'escalationPopup'
+    ).style.display = 'block';
+}
+
+function closeEscalation() {
+
+    document.getElementById(
+        'escalationPopup'
+    ).style.display = 'none';
+}
+function validateSubmit(event) {
+
+    const checkedTags = document.querySelectorAll(
+        'input[name="tags"]:checked'
+    );
+
+    if (checkedTags.length === 0) {
+
+        alert(
+            'Please select at least one tag'
+        );
+
+        return false;
+    }
+
+    document.getElementById(
+        'tagForm'
+    ).submit();
+
+    return true;
+}
+</script>
+
+</body>
+
+</html>
