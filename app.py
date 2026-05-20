@@ -434,11 +434,12 @@ def employee():
 
             db.session.commit()
 
-    completed_count = Report.query.filter_by(
+    completed_count = Report.query.filter(
 
-        assigned_to=username,
+        Report.assigned_to == username,
+        Report.selected_tags != None,
+         Report.selected_tags != ""
 
-        status="Completed"
 
     ).count()
 
@@ -446,10 +447,10 @@ def employee():
 
         Report.assigned_to == username,
 
-        Report.status.in_([
-            "Pending",
-            "In Progress"
-        ])
+        ( 
+            (Report.selected_tags == None) |
+            (Report.selected_tags == "")    
+        )
 
     ).count()
 

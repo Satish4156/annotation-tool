@@ -6,6 +6,12 @@
     <title>Employee Dashboard</title>
 
     <link
+    rel="icon"
+    type="image/png"
+    href="{{ url_for('static', filename='icons/Employee.png') }}"
+>
+
+    <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
@@ -32,7 +38,7 @@
 
         <div class="dashboard-cards">
 
-            <div class="card">
+            <div class="employee-card"> 
 
                 <h3>Completed</h3>
 
@@ -40,7 +46,7 @@
 
             </div>
 
-            <div class="card">
+            <div class="employee-card">
 
                 <h3>Pending</h3>
 
