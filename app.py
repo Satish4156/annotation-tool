@@ -27,6 +27,8 @@ from models import (
 
 app = Flask(__name__)
 
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+
 app.secret_key = secrets.token_hex(16)
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -281,6 +283,9 @@ def delete_employee():
 # =====================================================
 # UPLOAD REPORTS
 # =====================================================
+# =====================================================
+# UPLOAD REPORTS
+# =====================================================
 
 @app.route('/upload', methods=['GET', 'POST'])
 
@@ -316,6 +321,10 @@ def upload():
 
             return "No File Uploaded"
 
+        # ============================================
+        # READ FILE
+        # ============================================
+
         try:
 
             if file.filename.endswith('.csv'):
@@ -326,9 +335,15 @@ def upload():
 
                 df = pd.read_excel(file)
 
+            df = df.fillna("")
+
         except Exception as e:
 
             return f"FILE ERROR: {e}"
+
+        # ============================================
+        # GET EMPLOYEES
+        # ============================================
 
         employees = Employee.query.filter_by(
             role="employee"
@@ -340,35 +355,45 @@ def upload():
 
         employee_index = 0
 
-        for _, row in df.iterrows():
+        # ============================================
+        # CHUNK UPLOAD
+        # ============================================
 
-            try:
+        chunk_size = 200
 
-                report_id = str(
-                    row.get('report_id', '')
-                ).strip()
+        for start in range(0, len(df), chunk_size):
 
-                content = str(
-                    row.get('content', '')
-                ).strip()
+            chunk = df.iloc[start:start + chunk_size]
 
-                bucket = row.get('bucket', '')
+            reports_to_add = []
 
-                if pd.isna(bucket):
+            for _, row in chunk.iterrows():
 
-                    bucket = ''
+                try:
 
-                bucket = str(bucket).strip()
+                    report_id = str(
+                        row.get('report_id', '')
+                    ).strip()
 
-                if report_id == '' or content == '':
+                    content = str(
+                        row.get('content', '')
+                    ).strip()
 
-                    continue
+                    bucket = str(
+                        row.get('bucket', '')
+                    ).strip()
 
-                report_exists = Report.query.filter_by(
-                    report_id=report_id
-                ).first()
+                    if report_id == '' or content == '':
 
-                if not report_exists:
+                        continue
+
+                    report_exists = Report.query.filter_by(
+                        report_id=report_id
+                    ).first()
+
+                    if report_exists:
+
+                        continue
 
                     assigned_employee = employees[
                         employee_index % len(employees)
@@ -387,20 +412,27 @@ def upload():
                         status="Pending"
                     )
 
-                    db.session.add(report)
+                    reports_to_add.append(report)
 
                     employee_index += 1
 
-            except Exception as e:
+                except Exception as e:
 
-                print("ROW ERROR:", e)
+                    print("ROW ERROR:", e)
 
-        db.session.commit()
+            # ========================================
+            # BULK INSERT
+            # ========================================
+
+            db.session.bulk_save_objects(
+                reports_to_add
+            )
+
+            db.session.commit()
 
         return redirect('/admin')
 
     return render_template('upload.html')
-
 # =====================================================
 # EMPLOYEE DASHBOARD
 # =====================================================
