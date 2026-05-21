@@ -10,6 +10,8 @@ import secrets
 
 import pandas as pd
 
+import gc
+
 from database import db
 
 from models import (
@@ -359,7 +361,7 @@ def upload():
         # CHUNK UPLOAD
         # ============================================
 
-        chunk_size = 12000
+        chunk_size = 1200
 
         for start in range(0, len(df), chunk_size):
 
@@ -429,6 +431,7 @@ def upload():
             )
 
             db.session.commit()
+            gc.collect()
 
         return redirect('/admin')
 
@@ -539,7 +542,7 @@ def employee():
 
         Report.selected_tags != None
 
-    ).limit(100).all()
+    ).limit(20).all()
 
     return render_template(
 
