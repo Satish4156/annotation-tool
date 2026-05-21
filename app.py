@@ -359,7 +359,7 @@ def upload():
         # CHUNK UPLOAD
         # ============================================
 
-        chunk_size = 2000
+        chunk_size = 12000
 
         for start in range(0, len(df), chunk_size):
 
