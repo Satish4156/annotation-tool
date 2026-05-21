@@ -359,7 +359,7 @@ def upload():
         # CHUNK UPLOAD
         # ============================================
 
-        chunk_size = 200
+        chunk_size = 2000
 
         for start in range(0, len(df), chunk_size):
 
@@ -606,7 +606,7 @@ def submit(id):
 
         sample = random.randint(1, 100)
 
-        if sample <= 20:
+        if sample <= 5:
 
             report.qc_required = True
 
