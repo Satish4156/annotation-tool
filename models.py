@@ -36,20 +36,11 @@ class Employee(db.Model):
 # =====================================================
 
 class Report(db.Model):
-    qc_selected_tags = db.Column(db.Text)
-    employee_name = db.Column(db.String(100))
-    employee_timestamp = db.Column(db.String(100))
-    qc_name = db.Column(db.String(100))
-    qc_timestamp = db.Column(db.String(100))
-    escalation_reason = db.Column(db.Text)
-
-
 
     id = db.Column(
         db.Integer,
         primary_key=True
     )
-    
 
     report_id = db.Column(
         db.String(100),
@@ -73,9 +64,25 @@ class Report(db.Model):
         default="Pending"
     )
 
+    # =========================================
+    # EMPLOYEE DETAILS
+    # =========================================
+
+    employee_name = db.Column(
+        db.String(100)
+    )
+
+    employee_timestamp = db.Column(
+        db.String(100)
+    )
+
     selected_tags = db.Column(
         db.Text
     )
+
+    # =========================================
+    # QC DETAILS
+    # =========================================
 
     qc_required = db.Column(
         db.Boolean,
@@ -86,13 +93,49 @@ class Report(db.Model):
         db.String(100)
     )
 
+    qc_name = db.Column(
+        db.String(100)
+    )
+
+    qc_selected_tags = db.Column(
+        db.Text
+    )
+
+    qc_timestamp = db.Column(
+        db.String(100)
+    )
+
     mismatch = db.Column(
         db.Boolean,
         default=False
     )
 
+    # =========================================
+    # APPEAL DETAILS
+    # =========================================
+
     appeal_status = db.Column(
         db.String(50)
+    )
+
+    escalation_reason = db.Column(
+        db.Text
+    )
+
+    # =========================================
+    # TEAM LEAD DETAILS
+    # =========================================
+
+    tl_name = db.Column(
+        db.String(100)
+    )
+
+    final_tl_tags = db.Column(
+        db.Text
+    )
+
+    tl_timestamp = db.Column(
+        db.String(100)
     )
 
 # =====================================================

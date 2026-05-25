@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appeals & Feedback Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+            --bg-canvas: #e0f2fe;       /* Premium soft sky blue backdrop */
+            --panel-bg: #ffffff;
+            --panel-border: #bae6fd;
+            --text-heading: #0369a1;
+            --text-body: #0f172a;
+            --text-muted: #64748b;
+            
+            --success-bg: #dcfce7;
+            --success-txt: #16a34a;
+            --error-bg: #fee2e2;
+            --error-txt: #dc2626;
+            --warning-bg: #fef3c7;
+            --warning-txt: #d97706;
+        }
+
+        body {
+            background-color: var(--bg-canvas) !important;
+            color: var(--text-body) !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding-bottom: 60px;
+        }
+
+        .container-fluid {
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: var(--panel-bg);
+            border-bottom: 2px solid var(--panel-border);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(3, 105, 161, 0.06);
+            border-radius: 0 0 12px 12px;
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin: 0;
+        }
+
+        /* Spreadsheet Layout Table styling */
+        .sheet-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--panel-bg);
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 10px 25px rgba(3, 105, 161, 0.08);
+            border: 1px solid var(--panel-border);
+            margin-top: 25px;
+        }
+
+        .sheet-table th {
+            background: #f0f9ff;
+            color: var(--text-heading);
+            font-weight: 700;
+            font-size: 13px;
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 2px solid var(--panel-border);
+            white-space: nowrap;
+        }
+
+        .sheet-table td {
+            padding: 14px 16px;
+            font-size: 13.5px;
+            border-bottom: 1px solid #f0f9ff;
+            vertical-align: middle;
+        }
+
+        .sheet-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .sheet-table tbody tr:hover td {
+            background: #f0f9ff;
+        }
+
+        /* Interactive Action Elements Hooks */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-badge.yes { background: var(--warning-bg); color: var(--warning-txt); }
+        .status-badge.no { background: #f1f5f9; color: #475569; }
+        .status-badge.qa { background: var(--error-bg); color: var(--error-txt); }
+        .status-badge.ops { background: var(--success-bg); color: var(--success-txt); }
+
+        .action-btn {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .action-btn:hover { background: #0369a1; }
+
+        .input-field {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <h1>Appeals & Feedback Performance Tracker</h1>
+        <a href="javascript:history.back()" style="color: var(--text-heading); font-weight: 600; text-decoration: none;">← Back</a>
+    </div>
+
+    <div class="container-fluid" style="overflow-x: auto;">
+        <table class="sheet-table">
+            <thead>
+                <tr>
+                    <th>Weekend</th>
+                    <th>Date</th>
+                    <th>Scenario</th>
+                    <th>Bucket</th>
+                    <th>Annotator Name</th>
+                    <th>QA Name</th>
+                    <th>Triaged Attached Tag</th>
+                    <th>QA Attached Tag</th>
+                    <th>Appeal Status YES/NO</th>
+                    <th>Triagger Comments</th>
+                    <th>QA Status YES/NO</th>
+                    <th>QA Comments</th>
+                    <th>Final Tag</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.weekend }}</td>
+                    <td>{{ record.date }}</td>
+                    <td><span style="font-weight:600; color:#475569;">{{ record.scenario }}</span></td>
+                    <td>{{ record.bucket }}</td>
+                    <td style="font-weight:600;">{{ record.annotator_name }}</td>
+                    <td>{{ record.qa_name }}</td>
+                    <td><span style="color:#0284c7; font-weight:600;">{{ record.triagged_attached_tag }}</span></td>
+                    <td><span style="color:#dc2626; font-weight:600;">{{ record.qa_attached_tag }}</span></td>
+                    
+                    <td>
+                        <span class="status-badge {% if record.appeal_status == 'YES' %}yes{% else %}no{% endif %}">
+                            {{ record.appeal_status }}
+                        </span>
+                    </td>
+                    
+                    <td>
+                        {% if record.appeal_status == "NO" and session['username'] == record.annotator_name %}
+                        <form method="POST" action="/appeal/submit/{{ record.id }}" style="display:flex; gap:6px; min-width:200px;">
+                            <input type="text" name="triagger_comments" class="input-field" placeholder="State reason..." required>
+                            <button type="submit" class="action-btn">Appeal</button>
+                        </form>
+                        {% else %}
+                        {{ record.triagger_comments if record.triagger_comments else '-' }}
+                        {% endif %}
+                    </td>
+                    
+                    <td>
+                        {% if record.qa_status == "Pending" and session['role'] in ['admin', 'quality_reviewer', 'team_lead'] %}
+                        <form method="POST" action="/appeal/review/{{ record.id }}" id="reviewForm-{{ record.id }}">
+                            <select name="qa_status" class="input-field" onchange="document.getElementById('reviewForm-{{ record.id }}').submit()" required>
+                                <option value="Pending" selected disabled>Choose resolution...</option>
+                                <option value="QA Agree">QA Agree (Loss)</option>
+                                <option value="OPS Agree">OPS Agree (Gain)</option>
+                            </select>
+                        {% else %}
+                        <span class="status-badge {% if record.qa_status == 'QA Agree' %}qa{% elif record.qa_status == 'OPS Agree' %}ops{% else %}no{% endif %}">
+                            {{ record.qa_status }}
+                        </span>
+                        {% endif %}
+                    </td>
+                    
+                    <td>
+                        {% if record.qa_status == "Pending" and session['role'] in ['admin', 'quality_reviewer', 'team_lead'] %}
+                            <input type="text" name="qa_comments" form="reviewForm-{{ record.id }}" class="input-field" placeholder="Add QA verdict...">
+                        {% else %}
+                            {{ record.qa_comments if record.qa_comments else '-' }}
+                        {% endif %}
+                    </td>
+                    
+                    <td><span style="font-weight:700; color: var(--text-heading);">{{ record.final_tag }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
